@@ -85,7 +85,7 @@ Plain markdown. Any Claude Code session can read them and continue without Proto
 
 ## Philosophy
 
-Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two subagents. No MCP server, no database, no token overhead. 12 files.
+Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two subagents. No MCP server, no database, no token overhead. 6 files installed.
 
 If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal alternative: a convention, not a framework.
 
@@ -98,8 +98,8 @@ If you want 36 tools and a task management server, use [Task Master](https://git
 | Component | What it does | Lines |
 |---|---|---|
 | `skills/go/SKILL.md` | Planning workflow, failure handling, file conventions | ~45 |
-| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~15 |
-| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~15 |
+| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~20 |
+| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~17 |
 
 The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`. It writes files without prompts, isolated from main until merged.
 
