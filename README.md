@@ -8,17 +8,11 @@ Product builders who use AI coding agents to implement. You steer at the product
 
 ## The problem
 
-Every iteration pollutes your context. You try approach A, it doesn't work, you switch to approach B. Approach A's code is still in context. After enough iterations, Claude gets confused by stale code and abandoned approaches. You compact or start fresh, then re-explain everything.
+When you brainstorm and code in the same conversation, decisions about what to build get buried in how you're building it. After enough iterations, neither you nor the model can tell what you're working towards. You start fresh, but the realizations from those iterations only exist scattered across stale context.
 
 ## How Proto solves it
 
-Proto captures decisions in project files outside the conversation. When context gets noisy, start fresh. Claude reads the files and picks up where you left off.
-
-**Phase 1: Planning.** You describe what you want. Claude creates project files: SPEC.md (what and why), ARCHITECTURE.md (technical decisions), PLAN.md (tasks with dependencies), PROGRESS.md (status). You approve each step.
-
-**Phase 2: Implementation.** Claude works through the plan, delegating tasks to subagents in isolated git worktrees. Implementation stays out of your conversation. Your main context stays clean for steering. When a task needs information not in the project files, Claude asks instead of guessing.
-
-Claude decides when subagents make sense and when to implement directly. You can override either way.
+Proto separates what from how. Project files hold the what: a spec, key decisions, a task plan, and progress. The conversation is for the how: implementation, steering, iteration. When context gets noisy, start fresh. The project files have everything you decided, structured and current.
 
 ## Install
 
@@ -39,7 +33,7 @@ Then:
 /go I want to build a habit tracker CLI. Track daily habits, mark them done, see streaks. Python, SQLite.
 ```
 
-Claude walks you through planning (SPEC, architecture, task breakdown), then implements using parallel subagents. Your main context stays clean.
+Claude helps you define what to build (spec, decisions, plan), then subagents build it. Your context stays clean for steering.
 
 To resume in a new session, open Claude Code in the same directory and say:
 ```
@@ -86,6 +80,10 @@ Claude already knows how to read files, track state, delegate work, and write co
 If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal alternative: a convention, not a framework.
 
 ## How it works
+
+**Phase 1: Planning.** You describe what you want. Claude creates project files: SPEC.md (what and why), ARCHITECTURE.md (key decisions like stack, components, data flow), PLAN.md (tasks with dependencies), PROGRESS.md (status). You approve each step. Nothing gets built until you say so.
+
+**Phase 2: Implementation.** Subagents build from the plan in isolated git worktrees. Your context stays clean for steering. Progress is tracked, so you always know what's done and what's left. When a task needs information not in the project files, Claude asks instead of guessing.
 
 | Component | What it does | Lines |
 |---|---|---|
