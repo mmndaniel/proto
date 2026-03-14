@@ -1,52 +1,36 @@
-# Proto - Development Guide
+# Proto
 
-## What this is
+This repo is a Claude Code plugin. It has a skill (`/go`) and two subagent definitions.
 
-A Claude Code plugin with three components:
-- `skills/proto/SKILL.md` - orchestration skill (the main workflow)
-- `agents/implementer.md` - subagent that implements tasks in isolated worktrees
-- `agents/integrator.md` - subagent that merges worktree branches and runs integration tests
+## Install for a user
 
-## Repository structure
-
-```
-proto/
-├── .claude-plugin/plugin.json    # plugin manifest
-├── skills/proto/                 # the skill
-│   ├── SKILL.md                  # orchestration instructions
-│   ├── scripts/init-project.sh   # project initialization
-│   └── references/               # guides loaded on demand
-├── agents/                       # subagent definitions
-│   ├── implementer.md            # worktree + acceptEdits + stop hook
-│   └── integrator.md             # merge + test
-└── eval/                         # dev tooling, not part of the plugin
-    └── measure-session.py        # session metrics extraction
+Copy three things:
+```bash
+cp -r skills/go ~/.claude/skills/go
+cp agents/implementer.md ~/.claude/agents/
+cp agents/integrator.md ~/.claude/agents/
 ```
 
-## How to work on this
+After install, the user can invoke `/go` or say "let's start a project" and it triggers automatically.
 
-### Changing the skill
-Edit `skills/proto/SKILL.md`. To test locally, copy to `~/.claude/skills/proto/SKILL.md` or use `claude --plugin-dir .` from this directory.
+## What's in the box
 
-### Changing subagents
-Edit files in `agents/`. Copy to `~/.claude/agents/` to test. The implementer has a Stop hook that auto-commits; this is defined in its frontmatter, not as a separate hook file.
+- `skills/go/SKILL.md` - planning and implementation workflow
+- `skills/go/scripts/init-project.sh` - scaffolds project files (SPEC.md, PLAN.md, etc.)
+- `skills/go/references/` - guides loaded on demand during planning
+- `agents/implementer.md` - implements tasks in isolated git worktrees, auto-commits via hook
+- `agents/integrator.md` - merges worktree branches, resolves conflicts, runs integration tests
+- `eval/` - test fixtures and measurement scripts (not installed, dev tooling only)
 
-### Testing changes
-1. Reset the test project: delete implementation files, reset PROGRESS.md to all PENDING
-2. Open a fresh Claude Code session in the test project directory
-3. Say "continue the project"
-4. Run `python3 eval/measure-session.py <session-jsonl>` to measure results
+## Developing
 
-### What to measure
-- **Active time**: wall time minus idle time (permission prompts, user away)
-- **Main agent turns**: lower is better, means orchestrator stayed lean
-- **Main agent output tokens**: lower means less context bloat
-- **Subagent commits**: implementers should auto-commit via hook, never manually
-- **Git merge usage**: integrator should use `git merge`, never manual file copying
+Edit `skills/go/SKILL.md` or `agents/*.md`, then test with `claude --plugin-dir .` from this directory.
 
-### Key design decisions
-- Orchestrator never writes code, merges branches, or reads implementation files
+To run evals: `./eval/run-suite.sh`
+
+Key design decisions:
+- Phase 2 is flexible: Claude decides when to use subagents vs direct implementation
 - Implementers never run git commands; the Stop hook commits automatically
 - Integrator reads PLAN.md to understand task intent when resolving conflicts
-- Progress updates happen after each batch, not just at the end (enables resumption)
-- Project files (SPEC.md, ARCHITECTURE.md, PLAN.md) are the communication channel between orchestrator and subagents
+- PROGRESS.md is updated after each batch (enables cross-session resumption)
+- Project files are the source of truth; when information is missing, ask the user

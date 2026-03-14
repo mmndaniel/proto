@@ -4,13 +4,11 @@ Project structure for AI-assisted development. Describe what you want, delegate 
 
 ## Who this is for
 
-Product builders who use AI coding agents as their primary implementation tool. You work at the product level: what to build, why, whether the result is right. You don't review every patch. You don't want to be in the code. You want to describe, delegate, steer, and iterate.
+Product builders who use AI coding agents as their primary implementation tool. You work at the product level: what to build, why, whether the result is right. You don't review every patch. You want to describe, delegate, steer, and iterate.
 
 ## The problem
 
 Every iteration pollutes your context. You try approach A, it doesn't work, you redirect to approach B. Now approach A's code is still in context. After enough iterations, Claude gets confused by stale code and abandoned approaches. You compact or start fresh, but then you have to re-explain everything.
-
-Bigger context windows help but don't solve this. A million tokens of clean context is more useful than a million tokens of iteration debris.
 
 ## How Proto solves it
 
@@ -24,27 +22,35 @@ Phase 2 is flexible. Claude decides when subagents make sense and when to implem
 
 ## Install
 
-**Full plugin** (recommended):
+**Standalone** (recommended for personal use):
+```bash
+git clone https://github.com/mmndaniel/proto.git
+cp -r proto/skills/go ~/.claude/skills/go
+cp proto/agents/*.md ~/.claude/agents/
+```
+Command: `/go`
+
+**Plugin** (for `--plugin-dir` or marketplace):
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
+Command: `/proto:go`
 
-**Skill only** (planning + progress tracking, no custom agents):
-```bash
-cp -r proto/skills/proto ~/.claude/skills/proto
-```
+Or just open Claude Code in this repo and say "install this for me." Claude reads CLAUDE.md and knows what to do.
 
-Pick one, not both. If you install the plugin with `--plugin-dir`, don't also copy the skill to `~/.claude/skills/`. Having both causes duplicate loading.
+Pick one method, not both. Having the skill installed standalone AND loaded as a plugin causes duplicate loading.
 
 ## Usage
 
 Start a new project:
 ```
-/proto I want to build an expense tracker CLI in Python. Track expenses with amount, category, and date. Monthly summaries. SQLite storage.
+/go I want to build a URL shortener CLI. Takes a long URL, generates a short code, stores in SQLite. Python, stdlib only.
 ```
 
-Claude will create the project files (SPEC.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md), asking for your approval at each step. Once you approve the plan, it implements.
+Or just say "let's start a project" and describe your idea. Claude picks up the skill automatically.
+
+Claude creates the project files (SPEC.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md), asking for your approval at each step. Once you approve the plan, it implements.
 
 Resume an existing project (new session, same directory):
 ```
@@ -67,21 +73,17 @@ Plain markdown. Work without Proto. Any Claude Code session can read them and co
 
 ## Philosophy
 
-The model is the engine. Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two specialized subagents. That's it. No MCP server, no database, no token overhead. 12 files total.
+The model is the engine. Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two specialized subagents. No MCP server, no database, no token overhead. 12 files total.
 
 If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal version: a convention the model follows, not a framework built around it.
 
 ## How it works
 
-Proto is a Claude Code plugin with three components:
-
 | Component | What it does | Lines |
 |---|---|---|
-| `skills/proto/SKILL.md` | Planning workflow, failure handling, project file convention | ~45 |
+| `skills/go/SKILL.md` | Planning workflow, failure handling, project file convention | ~45 |
 | `agents/implementer.md` | Implements one task in an isolated git worktree. A Stop hook auto-commits when the subagent finishes. | ~15 |
 | `agents/integrator.md` | Merges worktree branches into main, resolves conflicts, runs integration checks. | ~15 |
-
-The skill includes reference guides for spec writing and architecture decisions, plus an init script that scaffolds project files.
 
 The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`, so it can write files without permission prompts and its work is isolated from the main repo until merged.
 
@@ -95,7 +97,7 @@ The integrator reads PLAN.md to understand task intent when resolving merge conf
 python3 eval/measure-session.py <session.jsonl>
 ```
 
-Five test fixtures covering: happy path, missing architecture decisions, merge conflicts, integration failures, and blocked tasks. The eval script checks behavioral correctness (did the skill trigger, did the orchestrator stay clean, did subagents commit via hook) alongside token and timing metrics.
+Five test fixtures covering: happy path, missing architecture decisions, merge conflicts, integration failures, and blocked tasks. The eval script checks behavioral correctness alongside token and timing metrics.
 
 See `eval/README.md` for details.
 

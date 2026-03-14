@@ -32,6 +32,7 @@ def parse_transcript(path):
     tool_details = []  # (tool_name, input_dict) for behavioral analysis
     agent_spawns = []
     text_outputs = []  # assistant text blocks
+    skill_injected = False  # detected via slash command in user messages
 
     for msg in messages:
         ts = msg.get("timestamp")
@@ -42,6 +43,12 @@ def parse_transcript(path):
                 timed_events.append((dt, msg_type))
             except Exception:
                 pass
+
+        # Detect skill injection via slash command
+        if msg.get("type") == "user":
+            user_content = str(msg.get("message", {}).get("content", ""))
+            if "/proto" in user_content or ("proto" in user_content.lower() and "Detect Starting State" in user_content):
+                skill_injected = True
 
         if msg.get("type") == "assistant":
             assistant_turns += 1
@@ -98,6 +105,7 @@ def parse_transcript(path):
         "tool_details": tool_details,
         "agent_spawns": agent_spawns,
         "text_outputs": text_outputs,
+        "skill_injected": skill_injected,
     }
 
 
@@ -105,15 +113,11 @@ def check_behaviors(main, subagents, subagent_metas):
     """Run behavioral checks and return list of (status, description)."""
     checks = []
 
-    # 1. Skill loaded (via Skill tool or /proto slash command)
-    skill_used = main["tool_calls"].get("Skill", 0) > 0
-    # Also check if skill content was injected via slash command
-    if not skill_used:
-        all_text = " ".join(main["text_outputs"]).lower()
-        for name, inp in main["tool_details"]:
-            if name == "Read" and "proto" in inp.get("file_path", "").lower() and "SKILL" in inp.get("file_path", ""):
-                skill_used = True
-                break
+    # 1. Skill loaded (via Skill tool, /proto slash command, or file read)
+    skill_used = (
+        main["tool_calls"].get("Skill", 0) > 0
+        or main.get("skill_injected", False)
+    )
     checks.append(("PASS" if skill_used else "FAIL", "Skill loaded"))
 
     # 2. Orchestrator never wrote implementation files

@@ -1,6 +1,6 @@
 ---
-name: proto
-description: Idea to working prototype, fast. Collaborative planning, then implementation. Use when user says "set up a project", "let's build this", "let's implement this", "continue the project", or "pick up where we left off". Do NOT use for one-off tasks, quick fixes, or conversations still exploring ideas without a decision to build.
+name: go
+description: Idea to working prototype. Structured planning, then implementation. Use when user says "set up a project", "let's build", "let's start a project", "continue the project", or "pick up where we left off". Do NOT use for one-off tasks, quick fixes, or conversations still exploring ideas without a decision to build.
 ---
 
 # Proto
