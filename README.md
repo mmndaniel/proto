@@ -97,6 +97,17 @@ The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree
 
 The integrator reads PLAN.md to understand task intent when resolving merge conflicts. If a conflict is ambiguous, it reports back instead of guessing.
 
+## Demo
+
+Want to see Phase 2 in action without going through planning? The eval fixtures include ready-made projects:
+
+```bash
+./eval/setup-test.sh happy-path    # 2-task greeter (quick)
+./eval/setup-test.sh merge-conflict # 2 tasks that conflict on cli.py
+```
+
+Then open Claude Code in the test project and say "continue the project." Watch the subagents spawn, implement in parallel, and merge.
+
 ## Evaluation
 
 ```bash
