@@ -22,24 +22,32 @@ Phase 2 is flexible. Claude decides when subagents make sense and when to implem
 
 ## Install
 
-**Standalone** (recommended for personal use):
+Proto has two layers. Use either or both.
+
+**Skill only** (planning + progress tracking):
+```bash
+git clone https://github.com/mmndaniel/proto.git
+cp -r proto/skills/go ~/.claude/skills/go
+```
+Gives you Phase 1 (structured planning, project files) and progress-based resumption. Claude implements tasks directly in the main context. No subagents.
+
+**Skill + agents** (full experience):
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 cp -r proto/skills/go ~/.claude/skills/go
 cp proto/agents/*.md ~/.claude/agents/
 ```
-Command: `/go`
+Same planning workflow, plus the implementer and integrator subagents. Claude delegates tasks to isolated worktrees by default, keeping your main context clean.
 
-**Plugin** (for `--plugin-dir` or marketplace):
+Both use `/go` as the command.
+
+Or open Claude Code in this repo and say "install this for me." Claude reads CLAUDE.md and knows what to do.
+
+**Plugin mode** (for marketplace or quick testing):
 ```bash
-git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
-Command: `/proto:go`
-
-Or just open Claude Code in this repo and say "install this for me." Claude reads CLAUDE.md and knows what to do.
-
-Pick one method, not both. Having the skill installed standalone AND loaded as a plugin causes duplicate loading.
+Command becomes `/proto:go`. Loads everything. Don't combine with standalone install.
 
 ## Usage
 
