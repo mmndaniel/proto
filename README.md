@@ -1,45 +1,33 @@
 # Proto
 
-Idea to working prototype, fast.
+Idea to working prototype, fast. No framework, no server, no dependencies. Just a convention the model follows.
 
-Proto is a Claude Code plugin that takes a rough idea and turns it into a working prototype using parallel subagents. You describe what you want to build, Proto helps you plan it, then implements everything autonomously using isolated worktrees.
+## Philosophy
 
-## How it works
+The model is the engine. You don't build machinery around it. You give it structure, goals, and good tools, then get out of the way.
+
+Proto is 12 files: one skill, two agent definitions, and some reference docs. No MCP server. No database. No token overhead. Claude already knows how to read files, track state, and delegate work. Proto just gives it a convention to follow.
+
+Think NanoClaw, not OpenClaw. If you want 36 tools and a dashboard, use [Task Master](https://github.com/eyaltoledano/claude-task-master). If you want the simplest thing that works, use this.
+
+## What it does
 
 **Phase 1: Planning (collaborative)**
-You and Claude work together to define the project: what you're building (PRD), how it's built (architecture), and what to do (plan). Each step is a conversation. Once you approve the plan, Proto takes over.
+You describe what you want to build. Claude interviews you, then creates structured project files: PRD, architecture, plan, and progress tracking. Each step is a conversation you approve before moving on.
 
 **Phase 2: Implementation (autonomous)**
-Proto spawns parallel subagents, each implementing one task in an isolated git worktree. When they finish, a dedicated integrator subagent merges the branches, resolves conflicts, and runs integration tests. Proto updates progress and repeats until everything is done.
+Claude works through the plan. For complex or parallel work, it delegates to implementer subagents running in isolated git worktrees, then merges results with a dedicated integrator. For simple tasks, it just implements directly. It decides what makes sense.
 
-## Architecture
-
-Three roles, each with a focused context window:
-
-| Role | Runs in | Purpose |
-|---|---|---|
-| **Orchestrator** (skill) | Main context | Reads state, delegates tasks, updates progress. Never writes code. |
-| **Implementer** (subagent) | Isolated worktree | Implements one task. Auto-commits via hook on completion. |
-| **Integrator** (subagent) | Main worktree | Merges branches, resolves conflicts, runs integration tests. |
+If something is missing (an architecture decision, an unclear requirement), it asks you instead of guessing. After getting your answer, it updates the project files and continues.
 
 ## Install
-
-### From the marketplace (once approved)
-
-```
-/plugin install proto@claude-plugins-official
-```
-
-### From source
 
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
 
-### Manual install
-
-Copy the components to your Claude Code config:
+Or copy the pieces manually:
 
 ```bash
 cp -r proto/skills/proto ~/.claude/skills/proto
@@ -49,68 +37,53 @@ cp proto/agents/integrator.md ~/.claude/agents/
 
 ## Usage
 
-### Start a new project
-
+Start a new project:
 ```
 /proto let's build a CLI bookmark tool in Python
 ```
 
-Proto will walk you through the PRD, architecture, and plan, then implement everything.
-
-### Resume an existing project
-
-Open Claude Code in the project directory and say:
-
+Resume an existing project:
 ```
 continue the project
 ```
 
-Proto detects the existing project files and picks up where it left off.
+Proto detects the project files and picks up where it left off.
 
 ## Project files
 
-Proto creates these files in your project:
+Proto creates these files in your project root. They're plain markdown. They work without Proto.
 
 | File | Purpose |
 |---|---|
 | `prd.md` | What you're building, for whom, why |
-| `architecture.md` | Stack, infrastructure, components |
+| `architecture.md` | Stack, components, key decisions |
 | `plan.md` | Tasks with IDs, descriptions, dependencies |
 | `progress.md` | Current state of each task |
 | `CLAUDE.md` | Agent instructions and run commands |
 
-## Why Proto
+These files are the cross-session memory. When you start a fresh Claude Code session, Claude reads them and knows exactly where the project stands. No conversation history needed.
 
-Proto isn't about being faster than plain Claude Code for small projects. Plain Claude Code will implement 5 simple tasks quicker than Proto can coordinate subagents to do the same.
+## Components
 
-Proto's value is the **scaffolding**: it forces you through PRD, architecture, and planning before writing code. That structure gives you:
+| Component | What it is | Lines |
+|---|---|---|
+| `skills/proto/SKILL.md` | The workflow: planning, delegation, failure handling | ~65 |
+| `agents/implementer.md` | Subagent: implements one task in an isolated worktree. Auto-commits via hook. | ~15 |
+| `agents/integrator.md` | Subagent: merges branches, resolves conflicts, runs integration tests. | ~15 |
 
-- **Resumability**: progress.md tracks what's done. Session dies? Next session picks up where you left off.
-- **Failure handling**: missing a decision in architecture.md? Proto asks instead of guessing. Bad task decomposition? It restructures the plan and re-delegates.
-- **Context management**: implementation happens in disposable subagent contexts. The main conversation stays lean for long sessions.
-- **Parallel execution**: independent tasks run simultaneously in isolated worktrees, with automatic merging.
-
-For small projects (under 5 tasks), plain Claude Code is faster. Proto is for when you want the structure, the tracking, and the ability to walk away and come back.
+That's it. The rest is reference docs the skill loads on demand.
 
 ## Evaluation
 
-The `eval/` directory contains tooling and test fixtures:
+The `eval/` directory has test fixtures, a runner, and a metrics script:
 
 ```bash
-# Run a single fixture
-./eval/run-suite.sh happy-path
-
-# Run all fixtures
-./eval/run-suite.sh
-
-# Test Phase 1 (new project from scratch)
-./eval/run-new-project.sh
-
-# Measure any session
-python3 eval/measure-session.py <session-jsonl>
+./eval/run-suite.sh           # run all fixtures
+./eval/run-new-project.sh     # test Phase 1 from scratch
+python3 eval/measure-session.py <session.jsonl>  # measure any session
 ```
 
-See `eval/README.md` for fixture descriptions and behavioral checks.
+See `eval/README.md` for details.
 
 ## License
 
