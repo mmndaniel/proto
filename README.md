@@ -12,7 +12,7 @@ When you brainstorm and code in the same conversation, decisions about what to b
 
 ## How Proto solves it
 
-Proto separates what from how. Project files hold the what: a spec, key decisions, a task plan, and progress. The conversation is for the how: implementation, steering, iteration. When context gets noisy, start fresh. The project files have everything you decided, structured and current.
+Proto separates what from how. Project files hold your decisions: a spec, key decisions, a task plan, and progress. Subagents handle implementation in isolated contexts. Your conversation stays clean for steering: changing direction, answering questions, evaluating results. When context gets noisy, start fresh. The project files have everything you decided, structured and current.
 
 ## Try it
 
