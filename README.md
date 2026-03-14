@@ -16,11 +16,17 @@ Proto separates what from how. Project files hold the what: a spec, key decision
 
 ## Try it
 
+Tell Claude Code:
+
+> Clone https://github.com/mmndaniel/proto, install it, and run the demo.
+
+Or manually:
+
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 cd proto && ./install.sh
-./eval/setup-test.sh happy-path
-cd /tmp/happy-path && claude
+./eval/setup-test.sh happy-path ./happy-path-demo
+cd happy-path-demo && claude
 ```
 
 Say `continue the project`. Claude reads the plan, spawns parallel implementers, merges their work, and updates progress.
