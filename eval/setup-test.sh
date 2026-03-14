@@ -1,0 +1,71 @@
+#!/bin/bash
+# Set up a test project from a fixture for evaluation.
+#
+# Usage: ./setup-test.sh <fixture-name> [target-dir]
+#
+# Example:
+#   ./setup-test.sh bookmark-cli /tmp/bookmark-cli
+#   ./setup-test.sh notes-api /tmp/notes-api
+#
+# Creates a git repo at target-dir with the fixture's project files
+# and a CLAUDE.md pointing to proto.
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+FIXTURE="${1:?Usage: setup-test.sh <fixture-name> [target-dir]}"
+FIXTURE_DIR="$SCRIPT_DIR/fixtures/$FIXTURE"
+TARGET="${2:-/tmp/$FIXTURE}"
+
+if [ ! -d "$FIXTURE_DIR" ]; then
+    echo "Fixture not found: $FIXTURE_DIR"
+    echo "Available fixtures:"
+    ls "$SCRIPT_DIR/fixtures/"
+    exit 1
+fi
+
+# Clean previous test
+rm -rf "$TARGET"
+mkdir -p "$TARGET"
+cd "$TARGET"
+
+git init
+git branch -m main 2>/dev/null || true
+
+# Copy fixture files
+cp "$FIXTURE_DIR"/*.md .
+
+# Add CLAUDE.md
+cat > CLAUDE.md << 'EOF'
+# Project Configuration
+
+## Project Files
+- `prd.md` - Product requirements. What we're building, for whom, and why.
+- `architecture.md` - Technical decisions. Stack, deployment, pipeline.
+- `plan.md` - Implementation plan. Discrete tasks with dependencies.
+- `progress.md` - Current state. What's done, what's pending, what's in progress.
+
+## How to work on this project
+Use the proto skill to implement tasks. Do not implement tasks directly.
+EOF
+
+# Add .gitignore
+cat > .gitignore << 'EOF'
+.env
+.env.*
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+dist/
+build/
+.claude/worktrees/
+EOF
+
+git add -A
+git commit -m "initial setup from fixture: $FIXTURE"
+
+echo ""
+echo "Test project ready at: $TARGET"
+echo "To test: cd $TARGET && claude"
+echo "Then say: continue the project"
