@@ -95,11 +95,11 @@ If you want 36 tools and a task management server, use [Task Master](https://git
 
 **Phase 2: Implementation.** Subagents build from the plan in isolated git worktrees. Your context stays clean for steering. Progress is tracked, so you always know what's done and what's left. When a task needs information not in the project files, Claude asks instead of guessing.
 
-| Component | What it does | Lines |
-|---|---|---|
-| `skills/go/SKILL.md` | Planning workflow, failure handling, file conventions | ~45 |
-| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~20 |
-| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~17 |
+| Component | What it does | Lines | Tokens |
+|---|---|---|---|
+| `skills/go/SKILL.md` | Planning workflow, failure handling, file conventions | ~45 | ~660 |
+| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~20 | ~210 |
+| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~17 | ~220 |
 
 The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`. It writes files without prompts, isolated from main until merged.
 
