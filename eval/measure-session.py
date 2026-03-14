@@ -162,12 +162,7 @@ def check_behaviors(main, subagents, subagent_metas):
     checks.append(("PASS" if integ_merge_cmds > 0 else "FAIL",
                     f"Integrator used git merge ({integ_merge_cmds} merge calls)"))
 
-    # 7. No TaskCreate/TaskUpdate (should use PROGRESS.md)
-    task_calls = main["tool_calls"].get("TaskCreate", 0) + main["tool_calls"].get("TaskUpdate", 0)
-    checks.append(("PASS" if task_calls == 0 else "WARN",
-                    f"No TaskCreate/TaskUpdate ({task_calls} calls)"))
-
-    # 8. Check if orchestrator asked user (for underspecified tasks)
+    # 7. Check if orchestrator asked user (for underspecified tasks)
     asked_user = False
     all_text = " ".join(main["text_outputs"]).lower()
     ask_indicators = ["which do you", "what would you", "could you clarify",
@@ -182,7 +177,7 @@ def check_behaviors(main, subagents, subagent_metas):
         asked_user = True
     checks.append(("INFO", f"Orchestrator asked user for input: {'yes' if asked_user else 'no'}"))
 
-    # 9. Check if PROGRESS.md was updated incrementally (not just at end)
+    # 8. Check if PROGRESS.md was updated incrementally (not just at end)
     progress_edits = sum(1 for name, inp in main["tool_details"]
                          if name == "Edit" and "PROGRESS" in inp.get("file_path", "").upper())
     checks.append(("PASS" if progress_edits >= 2 else "WARN",

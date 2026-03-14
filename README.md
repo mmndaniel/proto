@@ -11,27 +11,29 @@ If you want 36 tools and a dashboard, use [Task Master](https://github.com/eyalt
 ## What it does
 
 **Phase 1: Planning (collaborative)**
-You describe what you want to build. Claude interviews you, then creates structured project files: PRD, architecture, plan, and progress tracking. You approve each step before moving on.
+You describe what you want to build. Claude interviews you, then creates structured project files: spec, architecture, plan, and progress tracking. You approve each step before moving on.
 
-**Phase 2: Implementation (autonomous)**
-Claude works through the plan. For parallel or complex work, it delegates to implementer subagents in isolated git worktrees, then merges with a dedicated integrator. For simple tasks, it implements directly.
+**Phase 2: Implementation**
+Claude works through the plan. For parallel or complex work, it can delegate to implementer subagents in isolated git worktrees, then merge with a dedicated integrator. For simple tasks, it implements directly. It decides what makes sense.
 
 When information is missing, it asks you instead of guessing. After getting your answer, it updates the project files and continues.
 
 ## Install
+
+**Skill only** (planning workflow, no custom agents):
+
+```bash
+cp -r proto/skills/proto ~/.claude/skills/proto
+```
+
+**Full plugin** (planning + implementer/integrator agents):
 
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
 
-Or copy manually:
-
-```bash
-cp -r proto/skills/proto ~/.claude/skills/proto
-cp proto/agents/implementer.md ~/.claude/agents/
-cp proto/agents/integrator.md ~/.claude/agents/
-```
+The skill works standalone. The plugin adds specialized subagents with worktree isolation and auto-commit hooks.
 
 ## Usage
 
@@ -63,7 +65,7 @@ A fresh Claude Code session reads these files and knows where the project stands
 
 | Component | What it is | Lines |
 |---|---|---|
-| `skills/proto/SKILL.md` | Planning, delegation, failure handling | ~65 |
+| `skills/proto/SKILL.md` | Planning, delegation, failure handling | ~45 |
 | `agents/implementer.md` | Implements one task in an isolated worktree. Auto-commits via hook. | ~15 |
 | `agents/integrator.md` | Merges branches, resolves conflicts, runs integration tests. | ~15 |
 
