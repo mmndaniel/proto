@@ -1,39 +1,41 @@
 # Proto
 
-Idea to working prototype, fast. 12 files, no dependencies.
+Project structure for AI-assisted development. Describe what you want, delegate implementation, come back anytime and pick up where you left off.
 
-## Why this exists
+## Who this is for
 
-Proto is one skill and two agent definitions. No MCP server, no database, no token overhead. Claude already knows how to read files, track state, and delegate work. Proto gives it a file convention and two specialized subagents.
+Product builders who use AI coding agents as their primary implementation tool. You work at the product level: what to build, why, whether the result is right. You don't review every patch. You don't want to be in the code. You want to describe, delegate, steer, and iterate.
 
-If you want 36 tools and a dashboard, use [Task Master](https://github.com/eyaltoledano/claude-task-master). If you want the simplest thing that works, use this.
+## The problem
 
-## What it does
+Every iteration pollutes your context. You try approach A, it doesn't work, you redirect to approach B. Now approach A's code is still in context. After enough iterations, Claude gets confused by stale code and abandoned approaches. You compact or start fresh, but then you have to re-explain everything.
 
-**Phase 1: Planning (collaborative)**
-You describe what you want to build. Claude interviews you, then creates structured project files: spec, architecture, plan, and progress tracking. You approve each step before moving on.
+Bigger context windows help but don't solve this. A million tokens of clean context is more useful than a million tokens of iteration debris.
 
-**Phase 2: Implementation**
-Claude works through the plan. For parallel or complex work, it can delegate to implementer subagents in isolated git worktrees, then merge with a dedicated integrator. For simple tasks, it implements directly. It decides what makes sense.
+## How Proto solves it
 
-When information is missing, it asks you instead of guessing. After getting your answer, it updates the project files and continues.
+Proto creates project files that capture your decisions outside the conversation. When a session ends or context gets noisy, you start fresh. Claude reads the files and knows exactly where things stand.
+
+**Phase 1: Planning.** You describe what you want to build. Claude interviews you and creates structured project files: SPEC.md (what and why), ARCHITECTURE.md (technical decisions), PLAN.md (tasks with dependencies), PROGRESS.md (what's done). You approve each step.
+
+**Phase 2: Implementation.** Claude works through the plan. It can delegate tasks to subagents that run in isolated git worktrees, keeping implementation details out of your conversation. Your main context stays clean for steering: changing direction, asking questions, evaluating results. When a task needs information that isn't in the project files, Claude asks you instead of guessing.
+
+Phase 2 is flexible. Claude decides when subagents make sense and when to implement directly. You can override either way.
 
 ## Install
 
-**Skill only** (planning workflow, no custom agents):
-
+**Skill only** (planning + progress tracking):
 ```bash
 cp -r proto/skills/proto ~/.claude/skills/proto
 ```
 
-**Full plugin** (planning + implementer/integrator agents):
-
+**Full plugin** (adds implementer and integrator subagents):
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
 
-The skill works standalone. The plugin adds specialized subagents with worktree isolation and auto-commit hooks.
+The skill works standalone. The plugin adds specialized subagents with worktree isolation and auto-commit hooks. Install whichever fits your workflow.
 
 ## Usage
 
@@ -49,7 +51,7 @@ continue the project
 
 ## Project files
 
-Proto creates these in your project root. Plain markdown. Work without Proto.
+Plain markdown. Work without Proto. Any Claude Code session can read them and continue.
 
 | File | Purpose |
 |---|---|
@@ -57,27 +59,41 @@ Proto creates these in your project root. Plain markdown. Work without Proto.
 | `ARCHITECTURE.md` | Stack, components, key decisions |
 | `PLAN.md` | Tasks with IDs, descriptions, dependencies |
 | `PROGRESS.md` | Current state of each task |
-| `CLAUDE.md` | Agent instructions and run commands |
+| `CLAUDE.md` | How to work on this project |
 
-A fresh Claude Code session reads these files and knows where the project stands. No conversation history needed.
+## Philosophy
 
-## Components
+The model is the engine. Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two specialized subagents. That's it. No MCP server, no database, no token overhead. 12 files total.
 
-| Component | What it is | Lines |
+If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal version: a convention the model follows, not a framework built around it.
+
+## How it works
+
+Proto is a Claude Code plugin with three components:
+
+| Component | What it does | Lines |
 |---|---|---|
-| `skills/proto/SKILL.md` | Planning, delegation, failure handling | ~45 |
-| `agents/implementer.md` | Implements one task in an isolated worktree. Auto-commits via hook. | ~15 |
-| `agents/integrator.md` | Merges branches, resolves conflicts, runs integration tests. | ~15 |
+| `skills/proto/SKILL.md` | Planning workflow, failure handling, project file convention | ~45 |
+| `agents/implementer.md` | Implements one task in an isolated git worktree. A Stop hook auto-commits when the subagent finishes. | ~15 |
+| `agents/integrator.md` | Merges worktree branches into main, resolves conflicts, runs integration checks. | ~15 |
+
+The skill includes reference guides for spec writing and architecture decisions, plus an init script that scaffolds project files.
+
+The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`, so it can write files without permission prompts and its work is isolated from the main repo until merged.
+
+The integrator reads PLAN.md to understand task intent when resolving merge conflicts. If a conflict is ambiguous, it reports back instead of guessing.
 
 ## Evaluation
 
 ```bash
-./eval/run-suite.sh           # run all fixtures
-./eval/run-new-project.sh     # test full flow from scratch
+./eval/run-suite.sh           # run all test fixtures
+./eval/run-new-project.sh     # test full Phase 1 + 2 flow
 python3 eval/measure-session.py <session.jsonl>
 ```
 
-See `eval/README.md` for fixture descriptions.
+Five test fixtures covering: happy path, missing architecture decisions, merge conflicts, integration failures, and blocked tasks. The eval script checks behavioral correctness (did the skill trigger, did the orchestrator stay clean, did subagents commit via hook) alongside token and timing metrics.
+
+See `eval/README.md` for details.
 
 ## License
 
