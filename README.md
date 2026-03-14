@@ -79,29 +79,18 @@ Proto creates these files in your project:
 | `progress.md` | Current state of each task |
 | `CLAUDE.md` | Agent instructions and run commands |
 
-## When to use Proto vs plain Claude Code
+## Why Proto
 
-Proto adds coordination overhead (spawning subagents, merging branches). For small projects that fit in one context window, plain Claude Code is faster. Proto's value is architectural:
+Proto isn't about being faster than plain Claude Code for small projects. Plain Claude Code will implement 5 simple tasks quicker than Proto can coordinate subagents to do the same.
 
-- **Context ceiling**: plain Claude Code puts all code in one context window. At 10+ tasks with complex code, that window fills up and quality degrades. Proto's orchestrator stays lean regardless of project size.
-- **Resumability**: Proto tracks state in progress.md. If the session dies mid-project, the next session picks up where it left off. Plain Claude Code has no tracking.
-- **Failure handling**: Proto asks the user when information is missing instead of guessing. It updates project files before re-delegating so subagents get correct context.
+Proto's value is the **scaffolding**: it forces you through PRD, architecture, and planning before writing code. That structure gives you:
 
-**Benchmark: 5-task bookmark CLI**
+- **Resumability**: progress.md tracks what's done. Session dies? Next session picks up where you left off.
+- **Failure handling**: missing a decision in architecture.md? Proto asks instead of guessing. Bad task decomposition? It restructures the plan and re-delegates.
+- **Context management**: implementation happens in disposable subagent contexts. The main conversation stays lean for long sessions.
+- **Parallel execution**: independent tasks run simultaneously in isolated worktrees, with automatic merging.
 
-| Metric | Plain Claude Code | Proto |
-|---|---|---|
-| Active time | 50s | 2m 16s |
-| Main agent turns | 22 | 38 |
-| Main agent output | 3.5K tokens | 5.0K tokens |
-| Main agent context | 392K | 876K |
-| Code in main context | all of it | none |
-| Resumable | no | yes |
-| Failure escalation | no | yes |
-
-Plain Claude Code is 2.7x faster for 5 small tasks. It writes all code directly in one pass. This works until the project outgrows one context window.
-
-Proto's orchestrator wrote zero lines of code. Implementation happened in disposable subagent contexts that don't bloat the main conversation. The orchestrator's output (5.0K) stays roughly constant whether you have 5 tasks or 50.
+For small projects (under 5 tasks), plain Claude Code is faster. Proto is for when you want the structure, the tracking, and the ability to walk away and come back.
 
 ## Evaluation
 
