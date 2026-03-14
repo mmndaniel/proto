@@ -31,6 +31,35 @@ cd happy-path-demo && claude
 
 Say `continue the project`. Claude reads the plan, spawns parallel implementers, merges their work, and updates progress.
 
+## How it works
+
+**Phase 1: Planning.** You describe what you want. Claude creates project files: SPEC.md (what and why), ARCHITECTURE.md (key decisions like stack, components, data flow), PLAN.md (tasks with dependencies), PROGRESS.md (status). You approve each step. Nothing gets built until you say so.
+
+**Phase 2: Implementation.** Subagents build from the plan in isolated git worktrees. Your context stays clean for steering. Progress is tracked, so you always know what's done and what's left. When a task needs information not in the project files, Claude asks instead of guessing.
+
+| Component | What it does | Lines | Tokens |
+|---|---|---|---|
+| `skills/go/SKILL.md` | Planning workflow, failure handling, file conventions | ~45 | ~660 |
+| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~20 | ~210 |
+| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~17 | ~220 |
+
+The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`. It writes files without prompts, isolated from main until merged.
+
+The integrator reads PLAN.md to understand task intent when resolving conflicts. If a conflict is ambiguous, it reports back instead of guessing.
+
+## Philosophy
+
+Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two subagents. No MCP server, no database, no token overhead. 6 files installed.
+
+If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal alternative: a convention, not a framework.
+
+## Install
+
+```bash
+git clone https://github.com/mmndaniel/proto.git
+cd proto && ./install.sh
+```
+
 ## Quick start
 
 ```bash
@@ -82,28 +111,6 @@ Plain markdown. Any Claude Code session can read them and continue without Proto
 | `PLAN.md` | Tasks with IDs, descriptions, dependencies |
 | `PROGRESS.md` | Current state of each task |
 | `CLAUDE.md` | How to work on this project |
-
-## Philosophy
-
-Claude already knows how to read files, track state, delegate work, and write code. Proto gives it a file convention and two subagents. No MCP server, no database, no token overhead. 6 files installed.
-
-If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal alternative: a convention, not a framework.
-
-## How it works
-
-**Phase 1: Planning.** You describe what you want. Claude creates project files: SPEC.md (what and why), ARCHITECTURE.md (key decisions like stack, components, data flow), PLAN.md (tasks with dependencies), PROGRESS.md (status). You approve each step. Nothing gets built until you say so.
-
-**Phase 2: Implementation.** Subagents build from the plan in isolated git worktrees. Your context stays clean for steering. Progress is tracked, so you always know what's done and what's left. When a task needs information not in the project files, Claude asks instead of guessing.
-
-| Component | What it does | Lines | Tokens |
-|---|---|---|---|
-| `skills/go/SKILL.md` | Planning workflow, failure handling, file conventions | ~45 | ~660 |
-| `agents/implementer.md` | One task in an isolated worktree, auto-commits on finish | ~20 | ~210 |
-| `agents/integrator.md` | Merges worktree branches, resolves conflicts, runs checks | ~17 | ~220 |
-
-The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`. It writes files without prompts, isolated from main until merged.
-
-The integrator reads PLAN.md to understand task intent when resolving conflicts. If a conflict is ambiguous, it reports back instead of guessing.
 
 ## Evaluation
 
