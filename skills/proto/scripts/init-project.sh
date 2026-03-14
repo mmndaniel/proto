@@ -15,10 +15,10 @@ if [ ! -d ".git" ]; then
 fi
 
 # Create all project files as empty placeholders
-touch prd.md
-touch architecture.md
-touch plan.md
-touch progress.md
+touch SPEC.md
+touch ARCHITECTURE.md
+touch PLAN.md
+touch PROGRESS.md
 
 # CLAUDE.md - the README for agents
 if [ ! -f "CLAUDE.md" ]; then
@@ -26,10 +26,10 @@ if [ ! -f "CLAUDE.md" ]; then
 # Project Configuration
 
 ## Project Files
-- `prd.md` - Product requirements. What we're building, for whom, and why.
-- `architecture.md` - Technical decisions. Stack, deployment, pipeline.
-- `plan.md` - Implementation plan. Discrete tasks with dependencies.
-- `progress.md` - Current state. What's done, what's pending, what's in progress.
+- `SPEC.md` - What we're building, for whom, and why.
+- `ARCHITECTURE.md` - Technical decisions. Stack, components, key decisions.
+- `PLAN.md` - Implementation plan. Tasks with IDs, descriptions, dependencies.
+- `PROGRESS.md` - Current state. What's done, what's pending, what's blocked.
 
 ## How to work on this project
 Use the proto skill to implement tasks. Do not implement tasks directly.

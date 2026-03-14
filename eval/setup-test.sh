@@ -3,10 +3,6 @@
 #
 # Usage: ./setup-test.sh <fixture-name> [target-dir]
 #
-# Example:
-#   ./setup-test.sh bookmark-cli /tmp/bookmark-cli
-#   ./setup-test.sh notes-api /tmp/notes-api
-#
 # Creates a git repo at target-dir with the fixture's project files
 # and a CLAUDE.md pointing to proto.
 
@@ -40,10 +36,10 @@ cat > CLAUDE.md << 'EOF'
 # Project Configuration
 
 ## Project Files
-- `prd.md` - Product requirements. What we're building, for whom, and why.
-- `architecture.md` - Technical decisions. Stack, deployment, pipeline.
-- `plan.md` - Implementation plan. Discrete tasks with dependencies.
-- `progress.md` - Current state. What's done, what's pending, what's in progress.
+- `SPEC.md` - What we're building, for whom, and why.
+- `ARCHITECTURE.md` - Technical decisions. Stack, components, key decisions.
+- `PLAN.md` - Implementation plan. Tasks with IDs, descriptions, dependencies.
+- `PROGRESS.md` - Current state. What's done, what's pending, what's blocked.
 
 ## How to work on this project
 Use the proto skill to implement tasks. Do not implement tasks directly.

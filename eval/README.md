@@ -33,6 +33,6 @@ python3 measure-session.py ~/.claude/projects/-tmp-happy-path/<session-id>.jsonl
 - Orchestrator didn't write/read source files
 - All implementers ran as background agents
 - Integrator was used and ran git merge
-- No TaskCreate/TaskUpdate (uses progress.md)
+- No TaskCreate/TaskUpdate (uses PROGRESS.md)
 - Progress updated incrementally
 - Orchestrator asked user when information was missing

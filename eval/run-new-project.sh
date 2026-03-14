@@ -1,6 +1,6 @@
 #!/bin/bash
 # Test Phase 1 (new project setup) by scripting a multi-turn conversation.
-# Simulates: user describes idea -> PRD -> architecture -> plan -> approve -> implement
+# Simulates: user describes idea -> SPEC -> architecture -> plan -> approve -> implement
 #
 # Usage: ./run-new-project.sh
 
@@ -36,7 +36,7 @@ claude \
     --dangerously-skip-permissions \
     --plugin-dir "$PLUGIN_DIR" \
     --continue \
-    -p "Looks good. Approve the PRD and architecture. Let's move to the plan." \
+    -p "Looks good. Approve the spec and architecture. Let's move to the plan." \
     > "$RESULTS_DIR/turn2-approve-prd.txt" 2>&1 || true
 
 # Turn 3: Approve plan
@@ -64,7 +64,7 @@ find "$TARGET" -type f -not -path '*/.git/*' -not -path '*/.claude/*' | sort >> 
 echo "" >> "$RESULTS_DIR/summary.txt"
 
 # Check for project files
-for f in prd.md architecture.md plan.md progress.md CLAUDE.md; do
+for f in SPEC.md ARCHITECTURE.md PLAN.md PROGRESS.md CLAUDE.md; do
     if [ -f "$TARGET/$f" ]; then
         echo "  [+] $f exists" >> "$RESULTS_DIR/summary.txt"
     else
@@ -73,10 +73,10 @@ for f in prd.md architecture.md plan.md progress.md CLAUDE.md; do
 done
 
 # Check progress
-if [ -f "$TARGET/progress.md" ]; then
+if [ -f "$TARGET/PROGRESS.md" ]; then
     echo "" >> "$RESULTS_DIR/summary.txt"
     echo "Progress:" >> "$RESULTS_DIR/summary.txt"
-    cat "$TARGET/progress.md" >> "$RESULTS_DIR/summary.txt"
+    cat "$TARGET/PROGRESS.md" >> "$RESULTS_DIR/summary.txt"
 fi
 
 # Run eval on the session

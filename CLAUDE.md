@@ -32,7 +32,7 @@ Edit `skills/proto/SKILL.md`. To test locally, copy to `~/.claude/skills/proto/S
 Edit files in `agents/`. Copy to `~/.claude/agents/` to test. The implementer has a Stop hook that auto-commits; this is defined in its frontmatter, not as a separate hook file.
 
 ### Testing changes
-1. Reset the test project: delete implementation files, reset progress.md to all PENDING
+1. Reset the test project: delete implementation files, reset PROGRESS.md to all PENDING
 2. Open a fresh Claude Code session in the test project directory
 3. Say "continue the project"
 4. Run `python3 eval/measure-session.py <session-jsonl>` to measure results
@@ -47,6 +47,6 @@ Edit files in `agents/`. Copy to `~/.claude/agents/` to test. The implementer ha
 ### Key design decisions
 - Orchestrator never writes code, merges branches, or reads implementation files
 - Implementers never run git commands; the Stop hook commits automatically
-- Integrator reads plan.md to understand task intent when resolving conflicts
+- Integrator reads PLAN.md to understand task intent when resolving conflicts
 - Progress updates happen after each batch, not just at the end (enables resumption)
-- Project files (prd.md, architecture.md, plan.md) are the communication channel between orchestrator and subagents
+- Project files (SPEC.md, ARCHITECTURE.md, PLAN.md) are the communication channel between orchestrator and subagents

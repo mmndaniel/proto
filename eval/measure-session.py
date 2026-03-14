@@ -115,7 +115,7 @@ def check_behaviors(main, subagents, subagent_metas):
         if name in ("Write", "Edit"):
             path = inp.get("file_path", "")
             base = Path(path).name
-            if base not in ("progress.md", "plan.md", "CLAUDE.md", "prd.md", "architecture.md"):
+            if base.upper() not in ("PROGRESS.MD", "PLAN.MD", "CLAUDE.MD", "SPEC.MD", "PRD.MD", "ARCHITECTURE.MD"):
                 source_writes.append(path)
     checks.append(("PASS" if not source_writes else "FAIL",
                     f"Orchestrator didn't write source files" +
@@ -127,8 +127,8 @@ def check_behaviors(main, subagents, subagent_metas):
         if name == "Read":
             path = inp.get("file_path", "")
             base = Path(path).name
-            project_files = {"progress.md", "plan.md", "CLAUDE.md", "prd.md", "architecture.md"}
-            if base not in project_files and not path.endswith("SKILL.md") and "references/" not in path and "subagent-prompt-template" not in path:
+            project_files = {"PROGRESS.MD", "PLAN.MD", "CLAUDE.MD", "SPEC.MD", "PRD.MD", "ARCHITECTURE.MD"}
+            if base.upper() not in project_files and not path.endswith("SKILL.md") and "references/" not in path and "subagent-prompt-template" not in path:
                 source_reads.append(path)
     checks.append(("PASS" if not source_reads else "WARN",
                     f"Orchestrator didn't read source files" +
@@ -162,7 +162,7 @@ def check_behaviors(main, subagents, subagent_metas):
     checks.append(("PASS" if integ_merge_cmds > 0 else "FAIL",
                     f"Integrator used git merge ({integ_merge_cmds} merge calls)"))
 
-    # 7. No TaskCreate/TaskUpdate (should use progress.md)
+    # 7. No TaskCreate/TaskUpdate (should use PROGRESS.md)
     task_calls = main["tool_calls"].get("TaskCreate", 0) + main["tool_calls"].get("TaskUpdate", 0)
     checks.append(("PASS" if task_calls == 0 else "WARN",
                     f"No TaskCreate/TaskUpdate ({task_calls} calls)"))
@@ -182,9 +182,9 @@ def check_behaviors(main, subagents, subagent_metas):
         asked_user = True
     checks.append(("INFO", f"Orchestrator asked user for input: {'yes' if asked_user else 'no'}"))
 
-    # 9. Check if progress.md was updated incrementally (not just at end)
+    # 9. Check if PROGRESS.md was updated incrementally (not just at end)
     progress_edits = sum(1 for name, inp in main["tool_details"]
-                         if name == "Edit" and "progress.md" in inp.get("file_path", ""))
+                         if name == "Edit" and "PROGRESS" in inp.get("file_path", "").upper())
     checks.append(("PASS" if progress_edits >= 2 else "WARN",
                     f"Progress updated incrementally ({progress_edits} edits)"))
 

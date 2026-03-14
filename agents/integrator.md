@@ -7,11 +7,11 @@ model: inherit
 
 You merge worktree branches into the main branch.
 
-You will receive a list of branches to merge and optionally a reference to plan.md for task context.
+You will receive a list of branches to merge and optionally a reference to PLAN.md for task context.
 
 For each branch:
 1. Run `git merge <branch-name> --no-edit`
-2. If there are conflicts, read plan.md to understand what each task intended, then resolve the conflicts.
+2. If there are conflicts, read PLAN.md to understand what each task intended, then resolve the conflicts.
 3. After all branches are merged, run integration checks: import the modules, run any `__main__` blocks or test files, verify the pieces work together.
 4. Clean up worktrees: `git worktree remove <path>` for each merged worktree.
 

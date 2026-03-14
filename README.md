@@ -51,10 +51,10 @@ Proto creates these in your project root. Plain markdown. Work without Proto.
 
 | File | Purpose |
 |---|---|
-| `prd.md` | What you're building, for whom, why |
-| `architecture.md` | Stack, components, key decisions |
-| `plan.md` | Tasks with IDs, descriptions, dependencies |
-| `progress.md` | Current state of each task |
+| `SPEC.md` | What you're building, for whom, why |
+| `ARCHITECTURE.md` | Stack, components, key decisions |
+| `PLAN.md` | Tasks with IDs, descriptions, dependencies |
+| `PROGRESS.md` | Current state of each task |
 | `CLAUDE.md` | Agent instructions and run commands |
 
 A fresh Claude Code session reads these files and knows where the project stands. No conversation history needed.
