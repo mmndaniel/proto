@@ -81,35 +81,27 @@ Proto creates these files in your project:
 
 ## When to use Proto vs plain Claude Code
 
-Proto adds coordination overhead (spawning subagents, merging branches). For small projects, plain Claude Code is faster. Proto's value shows when:
+Proto adds coordination overhead (spawning subagents, merging branches). For small projects that fit in one context window, plain Claude Code is faster. Proto's value is architectural:
 
-- The project has 5+ tasks with dependencies between them
-- Multiple tasks can run in parallel
-- You want to keep your main context window lean for a long session
-- You need to resume across sessions (progress.md tracks state)
-
-**Benchmark: 2-task greeter project**
-
-| Metric | Plain Claude Code | Proto |
-|---|---|---|
-| Active time | 26s | 1m 7s |
-| Main agent turns | 15 | 23 |
-| Main agent output | 1.1K tokens | 2.3K tokens |
-| Code written by main agent | all of it | none |
-
-For 2 tasks, plain Claude Code wins. But the main agent wrote all the code itself, consuming context. In a 10+ task project, that approach fills the context window. Proto's main agent stays at similar token counts regardless of project size because implementation happens in disposable subagent contexts.
+- **Context ceiling**: plain Claude Code puts all code in one context window. At 10+ tasks with complex code, that window fills up and quality degrades. Proto's orchestrator stays lean regardless of project size.
+- **Resumability**: Proto tracks state in progress.md. If the session dies mid-project, the next session picks up where it left off. Plain Claude Code has no tracking.
+- **Failure handling**: Proto asks the user when information is missing instead of guessing. It updates project files before re-delegating so subagents get correct context.
 
 **Benchmark: 5-task bookmark CLI**
 
-| Metric | Proto |
-|---|---|
-| Active time | 2m 16s |
-| Main agent turns | 30 |
-| Main agent output | 4.6K tokens |
-| Agent spawns | 7 (5 implementers + 2 integrators) |
-| Code written by main agent | none |
+| Metric | Plain Claude Code | Proto |
+|---|---|---|
+| Active time | 50s | 2m 16s |
+| Main agent turns | 22 | 38 |
+| Main agent output | 3.5K tokens | 5.0K tokens |
+| Main agent context | 392K | 876K |
+| Code in main context | all of it | none |
+| Resumable | no | yes |
+| Failure escalation | no | yes |
 
-The orchestrator stayed lean at 30 turns and 4.6K output while 5 tasks were implemented and merged in parallel batches.
+Plain Claude Code is 2.7x faster for 5 small tasks. It writes all code directly in one pass. This works until the project outgrows one context window.
+
+Proto's orchestrator wrote zero lines of code. Implementation happened in disposable subagent contexts that don't bloat the main conversation. The orchestrator's output (5.0K) stays roughly constant whether you have 5 tasks or 50.
 
 ## Evaluation
 
