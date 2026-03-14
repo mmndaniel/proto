@@ -1,0 +1,11 @@
+{
+  "name": "proto",
+  "description": "Idea to working prototype, fast. Collaborative planning, then autonomous parallel implementation using subagents with worktree isolation.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Daniel"
+  },
+  "repository": "https://github.com/daniel/proto",
+  "license": "MIT",
+  "keywords": ["prototyping", "orchestration", "parallel", "subagents", "worktree"]
+}
