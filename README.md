@@ -1,6 +1,6 @@
 # Proto
 
-Project structure for AI-assisted development. Describe what you want, delegate implementation, pick up where you left off.
+Idea to working prototype, fast. Iterate without losing context. Subagents build in parallel while you steer.
 
 ## Who this is for
 
