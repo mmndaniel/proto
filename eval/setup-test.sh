@@ -42,7 +42,7 @@ cat > CLAUDE.md << 'EOF'
 - `PROGRESS.md` - Current state. What's done, what's pending, what's blocked.
 
 ## How to work on this project
-Use the proto skill to implement tasks. Do not implement tasks directly.
+Use `/go` to plan and implement tasks.
 EOF
 
 # Add .gitignore

@@ -1,13 +1,14 @@
 # Eval Suite
 
-Four test fixtures, each 2 tasks, each testing one behavior:
+Five fixtures, each with 2 tasks, each testing one behavior:
 
 | Fixture | Tests | Expected behavior |
 |---|---|---|
-| `happy-path` | Baseline: 2 independent tasks, clean merge | Skill triggers, parallel implementers, integrator merges, all checks pass |
-| `missing-decision` | Architecture gap (config format undecided) | Orchestrator asks user before delegating TASK-001 |
+| `happy-path` | 2 independent tasks, clean merge | Parallel implementers, integrator merges, all checks pass |
+| `missing-decision` | Architecture gap (config format undecided) | Orchestrator asks user before delegating |
 | `merge-conflict` | 2 tasks both write to cli.py | Integrator resolves conflict, keeps both subcommands |
-| `blocked-task` | Task references unreachable internal API | Implementer returns blocked, orchestrator asks user for API details |
+| `integration-fail` | Tasks that break when combined | Integrator reports failure, orchestrator creates fix task |
+| `blocked-task` | Task references unreachable API | Implementer returns blocked, orchestrator asks user |
 
 ## Running a test
 
@@ -28,10 +29,4 @@ python3 measure-session.py ~/.claude/projects/-tmp-happy-path/<session-id>.jsonl
 
 **Metrics**: active time, token usage, turns, agent spawns.
 
-**Behavioral checks**:
-- Skill invoked
-- Orchestrator didn't write/read source files
-- All implementers ran as background agents
-- Integrator was used and ran git merge
-- Progress updated incrementally
-- Orchestrator asked user when information was missing
+**Behavioral checks**: skill invoked, orchestrator stayed out of source files, implementers ran as background agents, integrator merged branches, progress updated incrementally, orchestrator asked user when information was missing.

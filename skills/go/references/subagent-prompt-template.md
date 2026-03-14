@@ -1,34 +1,31 @@
 # Subagent Prompt Template
 
-Use this structure when prompting each subagent.
+Structure for prompting each subagent.
 
 ## Template
 
 ```
-You are implementing a single task for the {{PROJECT_NAME}} project.
+Implementing a single task for {{PROJECT_NAME}}.
 
-## Your task
+## Task
 {{TASK_ID}}: {{TASK_DESCRIPTION}}
 
-## Project context
-{{RELEVANT_CONTEXT_FROM_PRD_AND_ARCHITECTURE}}
+## Context
+{{RELEVANT_CONTEXT_FROM_SPEC_AND_ARCHITECTURE}}
 
-## Definition of done
-{{WHAT_SUCCESS_LOOKS_LIKE_FOR_THIS_TASK}}
+## Done when
+{{WHAT_SUCCESS_LOOKS_LIKE}}
 
 ## Constraints
-- Follow existing code conventions in the repo
-- No placeholder or TODO code. Complete implementations only.
-- No hardcoded secrets. Use environment variables.
+- Follow existing code conventions
+- No placeholder or TODO code
+- No hardcoded secrets; use environment variables
 
-## Before finishing
-Verify your work runs without errors and matches the task requirements.
-
-Complete the implementation in your worktree.
+Verify your work runs without errors. Complete the implementation in your worktree.
 ```
 
 ## Guidelines
 
-- Include only context the subagent needs. Don't dump entire files.
-- Define the goal, not the approach. Let the subagent decide how to implement.
-- Keep it concise. A shorter prompt means the subagent spends tokens on code, not reading.
+- Include only what the subagent needs. Don't dump entire files.
+- Define the goal, not the approach.
+- Shorter prompts mean more tokens spent on code.

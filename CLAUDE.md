@@ -1,36 +1,34 @@
 # Proto
 
-This repo is a Claude Code plugin. It has a skill (`/go`) and two subagent definitions.
+Claude Code plugin. Skill (`/go`) + two subagents (implementer, integrator).
 
-## Install for a user
+## Install
 
-Copy three things:
 ```bash
-cp -r skills/go ~/.claude/skills/go
-cp agents/implementer.md ~/.claude/agents/
-cp agents/integrator.md ~/.claude/agents/
+./install.sh
 ```
 
-After install, the user can invoke `/go` or say "let's start a project" and it triggers automatically.
+After install, `/go` or "let's start a project" triggers the skill.
 
-## What's in the box
+## Files
 
 - `skills/go/SKILL.md` - planning and implementation workflow
-- `skills/go/scripts/init-project.sh` - scaffolds project files (SPEC.md, PLAN.md, etc.)
-- `skills/go/references/` - guides loaded on demand during planning
-- `agents/implementer.md` - implements tasks in isolated git worktrees, auto-commits via hook
-- `agents/integrator.md` - merges worktree branches, resolves conflicts, runs integration tests
-- `eval/` - test fixtures and measurement scripts (not installed, dev tooling only)
+- `skills/go/scripts/init-project.sh` - scaffolds project files
+- `skills/go/references/` - guides loaded during planning
+- `agents/implementer.md` - implements tasks in isolated worktrees, auto-commits via hook
+- `agents/integrator.md` - merges branches, resolves conflicts, runs integration tests
+- `eval/` - test fixtures and measurement scripts (dev only)
 
 ## Developing
 
-Edit `skills/go/SKILL.md` or `agents/*.md`, then test with `claude --plugin-dir .` from this directory.
+Edit `skills/go/SKILL.md` or `agents/*.md`, test with `claude --plugin-dir .`.
 
-To run evals: `./eval/run-suite.sh`
+Evals: `./eval/run-suite.sh`
 
-Key design decisions:
-- Phase 2 is flexible: Claude decides when to use subagents vs direct implementation
-- Implementers never run git commands; the Stop hook commits automatically
-- Integrator reads PLAN.md to understand task intent when resolving conflicts
-- PROGRESS.md is updated after each batch (enables cross-session resumption)
-- Project files are the source of truth; when information is missing, ask the user
+## Design decisions
+
+- Claude decides subagents vs direct implementation (user can override)
+- Implementers never run git commands; Stop hook auto-commits
+- Integrator reads PLAN.md to resolve conflicts
+- PROGRESS.md updated after each batch for cross-session resumption
+- Project files are source of truth; ask the user when information is missing
