@@ -14,12 +14,16 @@ When you brainstorm and code in the same conversation, decisions about what to b
 
 Proto separates what from how. Project files hold the what: a spec, key decisions, a task plan, and progress. The conversation is for the how: implementation, steering, iteration. When context gets noisy, start fresh. The project files have everything you decided, structured and current.
 
-## Install
+## Try it
 
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 cd proto && ./install.sh
+./eval/setup-test.sh happy-path
+cd /tmp/happy-path && claude
 ```
+
+Say `continue the project`. Claude reads the plan, spawns parallel implementers, merges their work, and updates progress.
 
 ## Quick start
 
@@ -94,17 +98,6 @@ If you want 36 tools and a task management server, use [Task Master](https://git
 The implementer runs with `permissionMode: acceptEdits` and `isolation: worktree`. It writes files without prompts, isolated from main until merged.
 
 The integrator reads PLAN.md to understand task intent when resolving conflicts. If a conflict is ambiguous, it reports back instead of guessing.
-
-## Demo
-
-See subagents in action without going through planning:
-
-```bash
-./eval/setup-test.sh happy-path
-cd /tmp/happy-path && claude
-```
-
-Then say `continue the project`. Claude reads the plan, spawns parallel implementers, merges their work, and updates progress.
 
 ## Evaluation
 
