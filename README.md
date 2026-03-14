@@ -33,7 +33,7 @@ Three roles, each with a focused context window:
 ### From source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/proto.git
+git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
 
@@ -79,15 +79,57 @@ Proto creates these files in your project:
 | `progress.md` | Current state of each task |
 | `CLAUDE.md` | Agent instructions and run commands |
 
+## When to use Proto vs plain Claude Code
+
+Proto adds coordination overhead (spawning subagents, merging branches). For small projects, plain Claude Code is faster. Proto's value shows when:
+
+- The project has 5+ tasks with dependencies between them
+- Multiple tasks can run in parallel
+- You want to keep your main context window lean for a long session
+- You need to resume across sessions (progress.md tracks state)
+
+**Benchmark: 2-task greeter project**
+
+| Metric | Plain Claude Code | Proto |
+|---|---|---|
+| Active time | 26s | 1m 7s |
+| Main agent turns | 15 | 23 |
+| Main agent output | 1.1K tokens | 2.3K tokens |
+| Code written by main agent | all of it | none |
+
+For 2 tasks, plain Claude Code wins. But the main agent wrote all the code itself, consuming context. In a 10+ task project, that approach fills the context window. Proto's main agent stays at similar token counts regardless of project size because implementation happens in disposable subagent contexts.
+
+**Benchmark: 5-task bookmark CLI**
+
+| Metric | Proto |
+|---|---|
+| Active time | 2m 16s |
+| Main agent turns | 30 |
+| Main agent output | 4.6K tokens |
+| Agent spawns | 7 (5 implementers + 2 integrators) |
+| Code written by main agent | none |
+
+The orchestrator stayed lean at 30 turns and 4.6K output while 5 tasks were implemented and merged in parallel batches.
+
 ## Evaluation
 
-The `eval/` directory contains tooling for measuring Proto's performance:
+The `eval/` directory contains tooling and test fixtures:
 
 ```bash
-python3 eval/measure-session.py ~/.claude/projects/<project>/<session-id>.jsonl
+# Run a single fixture
+./eval/run-suite.sh happy-path
+
+# Run all fixtures
+./eval/run-suite.sh
+
+# Test Phase 1 (new project from scratch)
+./eval/run-new-project.sh
+
+# Measure any session
+python3 eval/measure-session.py <session-jsonl>
 ```
 
-Reports: active time (excludes idle/permission waits), token usage, agent spawns, tool calls per agent, and subagent metrics.
+See `eval/README.md` for fixture descriptions and behavioral checks.
 
 ## License
 
