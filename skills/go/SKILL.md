@@ -30,7 +30,7 @@ Work with the user to establish these files, in this order. Confirm each before 
 
 Once the user approves the plan, work through it autonomously. Update PROGRESS.md after completing each task. Update CLAUDE.md with run/test instructions as they emerge. Commit after each batch of work.
 
-By default, delegate tasks to `implementer` subagents. Each runs in an isolated git worktree and auto-commits. After a batch finishes, use the `integrator` subagent to merge branches and run integration checks. This keeps implementation out of the main context.
+By default, delegate tasks to `implementer` subagents in parallel as background agents. Each runs in an isolated git worktree and auto-commits. After a batch finishes, use the `integrator` subagent to merge branches and run integration checks. This keeps implementation out of the main context.
 
 If the user asks to implement directly (e.g., "just do it here", "no subagents"), implement in the main context instead.
 
