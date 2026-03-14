@@ -22,50 +22,45 @@ Phase 2 is flexible. Claude decides when subagents make sense and when to implem
 
 ## Install
 
-Proto has two layers. Use either or both.
-
-**Skill only** (planning + progress tracking):
-```bash
-git clone https://github.com/mmndaniel/proto.git
-cp -r proto/skills/go ~/.claude/skills/go
-```
-Gives you Phase 1 (structured planning, project files) and progress-based resumption. Claude implements tasks directly in the main context. No subagents.
-
-**Skill + agents** (full experience):
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 cp -r proto/skills/go ~/.claude/skills/go
 cp proto/agents/*.md ~/.claude/agents/
 ```
-Same planning workflow, plus the implementer and integrator subagents. Claude delegates tasks to isolated worktrees by default, keeping your main context clean.
 
-Both use `/go` as the command.
+## Quick start
 
-Or open Claude Code in this repo and say "install this for me." Claude reads CLAUDE.md and knows what to do.
-
-**Plugin mode** (for marketplace or quick testing):
 ```bash
-claude --plugin-dir ./proto
-```
-Command becomes `/proto:go`. Loads everything. Don't combine with standalone install.
-
-## Usage
-
-Start a new project:
-```
-/go I want to build a URL shortener CLI. Takes a long URL, generates a short code, stores in SQLite. Python, stdlib only.
+mkdir my-project && cd my-project
+claude
 ```
 
-Or just say "let's start a project" and describe your idea. Claude picks up the skill automatically.
+Then:
+```
+/go I want to build a habit tracker CLI. Track daily habits, mark them done, see streaks. Python, SQLite.
+```
 
-Claude creates the project files (SPEC.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md), asking for your approval at each step. Once you approve the plan, it implements.
+Claude walks you through planning (SPEC, architecture, task breakdown), then implements using parallel subagents. Your main context stays clean.
 
-Resume an existing project (new session, same directory):
+To resume in a new session, open Claude Code in the same directory and say:
 ```
 continue the project
 ```
 
-Claude reads the project files, sees what's done in PROGRESS.md, and picks up where it left off.
+## Install options
+
+The quick start above installs everything. If you want more control:
+
+**Skill only** (planning + progress tracking, no subagents):
+```bash
+cp -r proto/skills/go ~/.claude/skills/go
+```
+
+**Plugin mode** (for `--plugin-dir` or marketplace):
+```bash
+claude --plugin-dir ./proto
+```
+Command becomes `/proto:go`. Don't combine with standalone install.
 
 ## Project files
 
