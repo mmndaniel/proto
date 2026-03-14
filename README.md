@@ -24,30 +24,34 @@ Phase 2 is flexible. Claude decides when subagents make sense and when to implem
 
 ## Install
 
-**Skill only** (planning + progress tracking):
-```bash
-cp -r proto/skills/proto ~/.claude/skills/proto
-```
-
-**Full plugin** (adds implementer and integrator subagents):
+**Full plugin** (recommended):
 ```bash
 git clone https://github.com/mmndaniel/proto.git
 claude --plugin-dir ./proto
 ```
 
-The skill works standalone. The plugin adds specialized subagents with worktree isolation and auto-commit hooks. Install whichever fits your workflow.
+**Skill only** (planning + progress tracking, no custom agents):
+```bash
+cp -r proto/skills/proto ~/.claude/skills/proto
+```
+
+Pick one, not both. If you install the plugin with `--plugin-dir`, don't also copy the skill to `~/.claude/skills/`. Having both causes duplicate loading.
 
 ## Usage
 
 Start a new project:
 ```
-/proto let's build a CLI bookmark tool in Python
+/proto I want to build an expense tracker CLI in Python. Track expenses with amount, category, and date. Monthly summaries. SQLite storage.
 ```
 
-Resume an existing project:
+Claude will create the project files (SPEC.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md), asking for your approval at each step. Once you approve the plan, it implements.
+
+Resume an existing project (new session, same directory):
 ```
 continue the project
 ```
+
+Claude reads the project files, sees what's done in PROGRESS.md, and picks up where it left off.
 
 ## Project files
 

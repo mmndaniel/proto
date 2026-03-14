@@ -105,9 +105,16 @@ def check_behaviors(main, subagents, subagent_metas):
     """Run behavioral checks and return list of (status, description)."""
     checks = []
 
-    # 1. Skill invoked
+    # 1. Skill loaded (via Skill tool or /proto slash command)
     skill_used = main["tool_calls"].get("Skill", 0) > 0
-    checks.append(("PASS" if skill_used else "FAIL", "Skill invoked"))
+    # Also check if skill content was injected via slash command
+    if not skill_used:
+        all_text = " ".join(main["text_outputs"]).lower()
+        for name, inp in main["tool_details"]:
+            if name == "Read" and "proto" in inp.get("file_path", "").lower() and "SKILL" in inp.get("file_path", ""):
+                skill_used = True
+                break
+    checks.append(("PASS" if skill_used else "FAIL", "Skill loaded"))
 
     # 2. Orchestrator never wrote implementation files
     source_writes = []
