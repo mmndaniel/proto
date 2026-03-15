@@ -53,6 +53,10 @@ Claude already knows how to read files, track state, delegate work, and write co
 
 If you want 36 tools and a task management server, use [Task Master](https://github.com/eyaltoledano/claude-task-master). Proto is the minimal alternative: a convention, not a framework.
 
+## Works with Noosphere
+
+Brainstorm on your phone, save it to [Noosphere](https://usenoosphere.ai), then pull it into Proto on your computer. Noosphere carries context across tools and sessions. Proto turns it into a spec, a plan, and working code.
+
 ## Install
 
 ```bash
