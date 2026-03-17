@@ -32,7 +32,7 @@ Once the user approves the plan, work through it autonomously. Update PROGRESS.m
 
 By default, delegate tasks to `implementer` subagents in parallel as background agents. Each runs in an isolated git worktree and auto-commits. After a batch finishes, use the `integrator` subagent to merge branches and run integration checks. This keeps implementation out of the main context.
 
-If subagent spawning fails with a worktree error, it means the git repo was created during this session (Claude Code only detects repos that existed at startup). Tell the user: "Subagents need a restart to detect the git repo. Start a new session and say 'continue the project' for parallel subagents, or I can implement directly here." If the user chooses to continue, implement directly in the main context.
+If `init-project.sh` output contained "Git repo created mid-session", subagent worktrees will not work in this session. Tell the user: "The plan is ready. Start a new session and say 'continue the project' for parallel subagents, or I can implement directly here." If the user chooses to continue, implement directly in the main context.
 
 If the user asks to implement directly (e.g., "just do it here", "no subagents"), implement in the main context instead.
 
