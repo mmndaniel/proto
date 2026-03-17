@@ -12,6 +12,7 @@ cd "$PROJECT_DIR"
 
 if [ ! -d ".git" ]; then
     git init
+    echo "NOTE: Git repo created mid-session. Restart Claude Code for subagent worktrees to work."
 fi
 
 # Create all project files as empty placeholders

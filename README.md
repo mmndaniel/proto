@@ -67,7 +67,7 @@ cd proto && ./install.sh
 ## Quick start
 
 ```bash
-mkdir my-project && cd my-project
+mkdir my-project && cd my-project && git init
 claude
 ```
 
